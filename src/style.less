@@ -1,0 +1,149 @@
+html, body, #root, .wrapper{
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    background-color: #ddd;
+}
+
+#root {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-wrapper {
+
+    &.hidden {
+        display: none;
+    }
+    
+    height: 100%;
+    width: 100%;
+
+    margin: 0;
+    padding: 0;
+
+    position: absolute;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    z-index: 2;
+    
+    background-color: rgba(0,0,0,.5);
+
+    .modal-container{
+
+        width: 500px;
+        height: 300px;
+
+        background-color: white;
+
+        *{
+            margin: 5px;
+        }
+    
+        input {
+            width: 250px;
+        }
+    }
+}
+
+.wrapper {
+    height: 100%;
+    width: 100%;
+
+    background-color: white;
+
+    z-index: 0;
+}
+
+.container {
+    min-width: 70px;
+    width: auto;
+    height: 90vh;
+    
+    display: grid;
+    grid-template-columns: 1fr 2fr 1fr;
+
+    .notification-wrapper {
+        
+        position: fixed;
+        bottom: 10px;
+        left: 10px;
+
+        height: 250px;
+        width: 400px;
+
+        background-color: white;
+
+        z-index: 2;
+        text-align: center;
+        .notification-buttons-container > button{
+            display: inline;
+
+            &#acceptButton{
+                background-color: green;
+            }
+
+            &#declineButton{
+                background-color: red;
+            }
+        }
+    }
+
+    .videos-wrapper {
+        display: flex;
+        flex-direction: column;
+    
+        justify-content: center;
+        align-items: center;
+    
+        * {
+            margin: 10px;
+        }
+    
+        video {
+            background-color: black;
+        }
+    }
+    
+    .buttons-wrapper {
+        display: flex;
+        flex-direction: column;
+
+        justify-content: center;
+        align-items: center;
+
+        .buttons-container {
+            background-color: #ddd;
+        
+            display: flex;
+            flex-direction: column;
+        
+            justify-content: center;
+            align-items: center;
+        
+            padding: 40px 10px;
+
+            *{
+
+                border: solid black 1px;
+                border-radius: 5px;
+            
+                width: 200px;
+                height: 30px;
+            
+                padding: 0;
+                margin: 5px 0px;
+            }
+    
+            input {
+                border: solid black 1px;
+            }
+        }
+    }
+}
+
+

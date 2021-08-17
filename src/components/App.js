@@ -188,7 +188,6 @@ const App = ()=>{
                     if (data.status === 'hanged up'){
                         stopCall();
                         setCallStatus(data.status);
-                        console.log('am hanging up!');
                     }
     
                     if (data.status === 'accepted'){
@@ -229,7 +228,6 @@ const App = ()=>{
 
         user.onSnapshot = null;
         const usdoc = firestore.collection('users').doc(user.id);
-        console.log(`the user doc is`,usdoc);
         usdoc.delete();
         setUser(null);
 
@@ -244,8 +242,6 @@ const App = ()=>{
             status
         });
     }
-
-    console.log(`the disabled now is `,!(user && !call),' because call is ',call,' and user is ',user);
 
     return(
         <div className="wrapper">

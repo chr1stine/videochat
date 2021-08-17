@@ -50,36 +50,33 @@ export const ChatProvider = ({ children }) => {
 
         if (call){
           deleteCallDocument();
-          setCall(null);
         }
+        setCall(null);
     }
     
     // удаляет документ текущего звонка
     async function deleteCallDocument(){
-      if (call){
+        call.onSnapshot = null;
 
-          call.onSnapshot = null;
+        const offerCandidates = call.collection('offerCandidates');
+        if (offerCandidates){
+            offerCandidates.get().then(q=>{
+                q.forEach(d=>{
+                    d.ref.delete();
+                })
+            })
+        }
 
-          const offerCandidates = call.collection('offerCandidates');
-          if (offerCandidates){
-              offerCandidates.get().then(q=>{
-                  q.forEach(d=>{
-                      d.ref.delete();
-                  })
-              })
-          }
+        const answerCandidates = call.collection('answerCandidates');
+        if (answerCandidates){
+            answerCandidates.get().then(q=>{
+                q.forEach(d=>{
+                    d.ref.delete();
+                })
+            })
+        }
 
-          const answerCandidates = call.collection('answerCandidates');
-          if (answerCandidates){
-              answerCandidates.get().then(q=>{
-                  q.forEach(d=>{
-                      d.ref.delete();
-                  })
-              })
-          }
-
-          call.delete();
-      }
+        call.delete();
     }
 
     return (

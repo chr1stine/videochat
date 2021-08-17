@@ -5,31 +5,38 @@ const Status = ()=>{
 
     const {callStatus} = useContext(chatContext);
 
-    const [text, setText] = useState(callStatus);
-
+    let line;
     switch(callStatus){
         case 'incoming':
-            setText('Входящий звонок');
+            line = 'Входящий звонок';
             break;
         case 'outgoing':
-            setText('Исходящий звонок');
+            line = 'Исходящий звонок'
             break;
         case 'declined':
-            setText('Звонок был сброшен');
+            line = 'Звонок был отклонён';
             break;
         case 'accepted':
-            setText('Звонок был принят');
+            line = 'Звонок был принят';
             break;
         case 'hanged up':
-            setText('Звонок был завершен');
+            line = 'Звонок был завершен';
             break;
-        default: break;
+        case 'you can\'t call yourself':
+            line = 'Нельзя позовонить себе';
+            break;
+        case 'callee with given id not found':
+            line = 'Пользователь с таким id не найден';
+            break;
+        default: 
+            line = callStatus;
+            break;
     }
 
     return(
         <div className="status-container">
             <h2>
-                {text}
+                {line}
             </h2>
         </div>
     );

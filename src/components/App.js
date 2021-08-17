@@ -112,7 +112,7 @@ const App = ()=>{
         const callee1 = firestore.collection('users').doc(inputRef.current.value);
 
         if (!users.includes(callee1.id)){
-            setCallStatus('Пользователь не найден');
+            setCallStatus('callee with given id not found');
         }else if(callee1 && caller1 != callee1){
 
             // соединение
@@ -188,6 +188,7 @@ const App = ()=>{
                     if (data.status === 'hanged up'){
                         stopCall();
                         setCallStatus(data.status);
+                        console.log('am hanging up!');
                     }
     
                     if (data.status === 'accepted'){
@@ -195,6 +196,11 @@ const App = ()=>{
                     }
     
                     if (data.status === 'declined'){
+                        stopCall();
+                        setCallStatus(data.status);
+                    }
+
+                    if (data.status === 'canceled'){
                         stopCall();
                         setCallStatus(data.status);
                     }
@@ -237,14 +243,15 @@ const App = ()=>{
         await call.update({
             status
         });
-        setCallStatus(status);
     }
+
+    console.log(`the disabled now is `,!(user && !call),' because call is ',call,' and user is ',user);
 
     return(
         <div className="wrapper">
             <div className="container">
                 <UsersList users={users}/>
-                {callStatus === 'incoming' && <Notification firestore={firestore}/>}
+                {callStatus === 'incoming' && call && <Notification firestore={firestore}/>}
                 {user && <Videos localStream={localStreamRef.current} remoteStream={remoteStreamRef.current}/>}
                 <div className="buttons-wrapper">
                     <div className="buttons-container">

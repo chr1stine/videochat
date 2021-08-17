@@ -22,11 +22,7 @@ const Notification = ()=>{
         caller, setCaller,
         callee,setCallee,
         firestore,
-        stopCall, deleteCallDocument} = useContext(chatContext);
-
-    useEffect(()=>{
-        console.log(callStatus);
-    },[callStatus]);
+        stopCall} = useContext(chatContext);
 
     // подписка на события звонка
     call.onSnapshot(async snapshot => {
@@ -50,8 +46,14 @@ const Notification = ()=>{
                 stopCall();
                 setCallStatus('canceled');
             }
+            
+            if (data.status === 'declined'){
+                stopCall();
+                setCallStatus('declined');
+            }
         }
     });
+    
 
     // принятие звонка
     async function acceptHandler(){
@@ -108,13 +110,9 @@ const Notification = ()=>{
 
     // отклонение звонка
     function declineHandler(){
-        setCallStatus('declined');
         call.update({
             status: 'declined'
         });
-        stopCall();
-        deleteCallDocument();
-        setCall(null);
     }
 
     return(

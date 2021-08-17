@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import Videos from './Videos'
 import * as _ from 'lodash'
-import Notification from './Notification';
+import IncomingCall from './IncomingCall';
 import chatContext from '../chatContext';
 import UsersList from './UsersList';
 
@@ -42,7 +42,6 @@ const App = ()=>{
         }
     }
 
-
     // определяет пользователей в сети
     async function defineUsers(){
         const users1 = [];
@@ -65,7 +64,6 @@ const App = ()=>{
         setUsers(users1);
     }
 
-
     // добавляет себя в систему(документ в коллекцию пользователей, состояние и т.д.)
     async function registerSelf(){
         const user1 = firestore.collection('users').doc();
@@ -86,7 +84,8 @@ const App = ()=>{
                 })
 
                 setCallee(user1);
-                setCaller(data?.callerID);
+                const caller1 = firestore.collection('users').doc(data?.callerID);
+                setCaller(caller1);
 
                 setCallStatus('incoming');
             }
@@ -95,14 +94,40 @@ const App = ()=>{
         setUser(user1);
     }
     
-
     // подключение в сеть
-    async function connectHandler(){
-        localStreamRef.current = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+    async function connect(permissions){        
+        localStreamRef.current = await navigator.mediaDevices
+        .getUserMedia({ 
+            video: permissions[0].state ==='granted', 
+            audio: permissions[1].state === 'granted' 
+        });
         await registerSelf();
         await defineUsers();
     }
 
+    // проверка разрешений и подключение
+    async function connectHandler(){
+
+        if (navigator.permissions){
+
+
+            const camera = await navigator.permissions.query({name:'camera'});
+            const microphone = await navigator.permissions.query({name:'microphone'});
+
+            if (camera.state === 'granted' || microphone.state === 'granted'){
+                // случай когда хотя бы один поток доступен
+                connect([camera,microphone]);
+                
+            }else{
+                // Не доступны потоки
+                console.log('not enough permissions to communicate');
+                
+                alert('Чтобы общаться, необходимо разрешить доступ к камере или микрофону(лучше оба). Сделать это можно в настройках');
+            }
+        }else{
+            alert('Похоже, ваш браузер не поддерживает уведомления. Попробуйте зайти через другой браузер');
+        }
+    }
 
     // исходящий звонок
     async function callHandler(){
@@ -218,22 +243,22 @@ const App = ()=>{
         }
     }
 
-
     // отключение
     async function disconnectHandler(){
 
         if (call){
             hangUpHandler();
         }
+        localStreamRef.current.getTracks().forEach(function(track) {
+            track.stop();
+        });
 
         user.onSnapshot = null;
-        const usdoc = firestore.collection('users').doc(user.id);
-        usdoc.delete();
+        firestore.collection('users').doc(user.id).delete();
         setUser(null);
 
         setUsers([]);
     }
-
 
     // обработка события сброса звонка
     async function hangUpHandler(){
@@ -247,7 +272,7 @@ const App = ()=>{
         <div className="wrapper">
             <div className="container">
                 <UsersList users={users}/>
-                {callStatus === 'incoming' && call && <Notification firestore={firestore}/>}
+                {callStatus === 'incoming' && call && <IncomingCall firestore={firestore}/>}
                 {user && <Videos localStream={localStreamRef.current} remoteStream={remoteStreamRef.current}/>}
                 <div className="buttons-wrapper">
                     <div className="buttons-container">
@@ -255,8 +280,7 @@ const App = ()=>{
                         <button onClick={callHandler} disabled={!(user && !call)}>Позвонить</button>
                         <button onClick={hangUpHandler} disabled={!(call && callStatus === 'accepted' || callStatus === 'outgoing')}>Сбросить</button>
                         <button onClick={disconnectHandler} disabled={!user}>Отключиться</button>
-                        <input ref={inputRef} type="text"></input>
-                        <p>{user?.id ? user.id : 'Здесь будет ваш ID'}</p>
+                        <input ref={inputRef} type="text" placeholder="ID абонента"></input>
                     </div>
                 </div>
             </div>

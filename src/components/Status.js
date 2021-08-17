@@ -3,7 +3,7 @@ import chatContext from '../chatContext';
 
 const Status = ()=>{
 
-    const {callStatus} = useContext(chatContext);
+    const {user,callStatus} = useContext(chatContext);
 
     let line;
     switch(callStatus){
@@ -35,6 +35,9 @@ const Status = ()=>{
 
     return(
         <div className="status-container">
+            <h1>
+                Ваш ID: {user.id}
+            </h1>
             <h2>
                 {line}
             </h2>

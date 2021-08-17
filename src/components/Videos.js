@@ -14,8 +14,8 @@ const Videos = ({localStream, remoteStream})=>{
     return(
         <div className="videos-wrapper">
             <div className="videos-container">
-                <video ref={myVideo} width="480" height="320" id="myVideo" autoPlay></video>
-                <video ref={peerVideo} width="480" height="320" id="peerVideo" autoPlay></video>
+                <video ref={myVideo} width="346" height="260" id="myVideo" autoPlay></video>
+                <video ref={peerVideo} width="346" height="260" id="peerVideo" autoPlay></video>
                 <Status />
             </div>
         </div>

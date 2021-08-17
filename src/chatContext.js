@@ -1,7 +1,7 @@
 import React, { createContext, useRef, useState } from 'react';
 import firebase from 'firebase/app';
 import 'firebase/firestore'
-import firebaseConfig from 'firebaseConfig';
+import firebaseConfig from './firebaseConfig';
 
 const chatContext = createContext({});
 

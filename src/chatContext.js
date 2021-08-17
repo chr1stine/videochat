@@ -1,6 +1,7 @@
 import React, { createContext, useRef, useState } from 'react';
 import firebase from 'firebase/app';
 import 'firebase/firestore'
+import firebaseConfig from 'firebaseConfig';
 
 const chatContext = createContext({});
 
@@ -8,17 +9,7 @@ export default chatContext;
 
 // export const ChatProvider = chatContext.Provider;
 export const ChatProvider = ({ children }) => {
-
   
-    const firebaseConfig = {
-      apiKey: "AIzaSyCUt3wHIFEeF-W9vKCjUoQusxkUVstu2so",
-      authDomain: "video-chat-29dd5.firebaseapp.com",
-      projectId: "video-chat-29dd5",
-      storageBucket: "video-chat-29dd5.appspot.com",
-      messagingSenderId: "549408870289",
-      appId: "1:549408870289:web:05f3cf02381565138e9430",
-      measurementId: "G-DT989GYERV"
-    };
 
     if (!firebase.apps.length) {
         firebase.initializeApp(firebaseConfig);
@@ -84,4 +75,4 @@ export const ChatProvider = ({ children }) => {
         {children}
       </chatContext.Provider>
     );
-  };
+};

@@ -5,6 +5,8 @@ html, body, #root, .wrapper{
     background-color: #ddd;
 }
 
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap');
+
 #root {
     display: flex;
     justify-content: center;
@@ -59,13 +61,25 @@ html, body, #root, .wrapper{
     z-index: 0;
 }
 
+h2,h1,p{
+    font-family: 'Montserrat', sans-serif;
+}
+
 .container {
-    min-width: 70px;
-    width: auto;
-    height: 90vh;
+    min-width: 70vw;
+    width: 100%;
+    height: 100%;
     
     display: grid;
     grid-template-columns: 1fr 2fr 1fr;
+
+    .usersList-wrapper {
+        width: 20%;
+
+        top: 50px;
+        .usersList-container {
+        }
+    }
 
     .notification-wrapper {
         
@@ -74,7 +88,7 @@ html, body, #root, .wrapper{
         left: 10px;
 
         height: 250px;
-        width: 400px;
+        width: 300px;
 
         background-color: white;
 
@@ -94,6 +108,7 @@ html, body, #root, .wrapper{
     }
 
     .videos-wrapper {
+
         display: flex;
         flex-direction: column;
     
@@ -110,6 +125,7 @@ html, body, #root, .wrapper{
     }
     
     .buttons-wrapper {
+
         display: flex;
         flex-direction: column;
 
@@ -117,8 +133,6 @@ html, body, #root, .wrapper{
         align-items: center;
 
         .buttons-container {
-            background-color: #ddd;
-        
             display: flex;
             flex-direction: column;
         
@@ -128,19 +142,13 @@ html, body, #root, .wrapper{
             padding: 40px 10px;
 
             *{
-
-                border: solid black 1px;
-                border-radius: 5px;
+                text-align: center;
             
                 width: 200px;
                 height: 30px;
             
                 padding: 0;
                 margin: 5px 0px;
-            }
-    
-            input {
-                border: solid black 1px;
             }
         }
     }

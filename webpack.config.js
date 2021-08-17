@@ -18,7 +18,13 @@ module.exports = {
                 }
             },
             {
-                test: /\.less/,
+                test: /\.(woff|woff2)$/,
+                use: {
+                    loader: 'url-loader',
+                },
+            },
+            {
+                test: /\.(less|css)/,
                 use:['style-loader','css-loader','less-loader']
             }
         ]

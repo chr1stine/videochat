@@ -22,6 +22,9 @@ const Status = ()=>{
         case 'hanged up':
             line = 'Звонок был завершен';
             break;
+        case 'canceled':
+            line = 'Звонок был отменен';
+            break;
         case 'you can\'t call yourself':
             line = 'Нельзя позовонить себе';
             break;

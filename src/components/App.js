@@ -271,16 +271,16 @@ const App = ()=>{
     return(
         <div className="wrapper">
             <div className="container">
-                <UsersList users={users}/>
+                {user && <UsersList users={users}/>}
                 {callStatus === 'incoming' && call && <IncomingCall firestore={firestore}/>}
                 {user && <Videos localStream={localStreamRef.current} remoteStream={remoteStreamRef.current}/>}
                 <div className="buttons-wrapper">
                     <div className="buttons-container">
-                        <button onClick={connectHandler} disabled={user}>Подключиться</button>
-                        <button onClick={callHandler} disabled={!(user && !call)}>Позвонить</button>
-                        <button onClick={hangUpHandler} disabled={!(call && callStatus === 'accepted' || callStatus === 'outgoing')}>Сбросить</button>
-                        <button onClick={disconnectHandler} disabled={!user}>Отключиться</button>
-                        <input ref={inputRef} type="text" placeholder="ID абонента"></input>
+                        <button className='btn btn-primary' onClick={connectHandler} disabled={user}>Подключиться</button>
+                        <button className='btn btn-primary' onClick={callHandler} disabled={!(user && !call)}>Позвонить</button>
+                        <button className='btn btn-primary' onClick={hangUpHandler} disabled={!(call && callStatus === 'accepted' || callStatus === 'outgoing')}>Сбросить</button>
+                        <button className='btn btn-primary' onClick={disconnectHandler} disabled={!user}>Отключиться</button>
+                        <input className='form-control input' ref={inputRef} type="text" placeholder="ID абонента"></input>
                     </div>
                 </div>
             </div>

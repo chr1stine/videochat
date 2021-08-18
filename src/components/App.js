@@ -95,11 +95,12 @@ const App = ()=>{
     }
     
     // подключение в сеть
-    async function connect(permissions){        
+    async function connect(video, audio){     
+        
         localStreamRef.current = await navigator.mediaDevices
         .getUserMedia({ 
-            video: permissions[0].state ==='granted', 
-            audio: permissions[1].state === 'granted' 
+            video,
+            audio 
         });
         await registerSelf();
         await defineUsers();
@@ -108,24 +109,16 @@ const App = ()=>{
     // проверка разрешений и подключение
     async function connectHandler(){
 
-        if (navigator.permissions){
-
-
-            const camera = await navigator.permissions.query({name:'camera'});
-            const microphone = await navigator.permissions.query({name:'microphone'});
-
-            if (camera.state === 'granted' || microphone.state === 'granted'){
-                // случай когда хотя бы один поток доступен
-                connect([camera,microphone]);
-                
-            }else{
-                // Не доступны потоки
-                console.log('not enough permissions to communicate');
-                
-                alert('Чтобы общаться, необходимо разрешить доступ к камере или микрофону(лучше оба). Сделать это можно в настройках');
-            }
+        const cameraPermission = await navigator.permissions.query({name: 'camera'});
+        const microphonePermission = await navigator.permissions.query({name: 'microphone'});
+        if (cameraPermission.state === 'denied' && microphonePermission.state === 'denied'){
+            alert('Необходимо разрешение на использование камеры или микрофона(лучше оба)');
         }else{
-            alert('Похоже, ваш браузер не поддерживает уведомления. Попробуйте зайти через другой браузер');
+            
+            const video = ['granted','prompt'].includes(cameraPermission.state);
+            const audio = ['granted','prompt'].includes(microphonePermission.state);
+
+            connect(video,audio);
         }
     }
 

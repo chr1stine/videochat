@@ -2,23 +2,35 @@ import React, { useContext } from 'react';
 import chatContext from '../chatContext';
 
 
-const UsersList = ({users})=>{
+const UsersList = ()=>{
 
-    const {user} = useContext(chatContext);
+    const {user, usersIds} = useContext(chatContext);
+
+    function usersIdsListItems(){
+        const lis = [];
+        usersIds.forEach(userId=>{
+
+            let str = userId;
+            if(userId===user.id){
+                str += '(Вы)';
+            }
+
+            lis.push(
+                <li key={userId}>
+                    { str }
+                </li>
+            );
+
+        });
+        return lis;
+    }
 
     return(
-        <div className="usersList-wrapper">
-            <div className="usersList-container">
+        <div className="usersIdsList-wrapper">
+            <div className="usersIdsList-container">
                 <h2>Подключенные пользователи</h2>
                 <ul>
-                   {users.map(user1 => {
-                        return (
-                            <li key={user1}>
-                                {`${user1}${user1===user ? '(Вы)' : ''}`}
-                            </li>
-                        );
-                    })
-                    }
+                   { usersIdsListItems() }
                 </ul>
             </div>
         </div>

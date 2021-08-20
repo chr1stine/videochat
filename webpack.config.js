@@ -11,7 +11,8 @@ module.exports = {
     module:{
         rules:[
             {
-                test:/\.js/,
+                test:/\.m?js$/,
+                exclude: /node_modules/,
                 loader:'babel-loader',
                 options:{
                     presets: ['@babel/preset-env','@babel/preset-react']
@@ -19,6 +20,7 @@ module.exports = {
             },
             {
                 test: /\.(woff|woff2)$/,
+                exclude: /node_modules/,
                 use: {
                     loader: 'url-loader',
                 },

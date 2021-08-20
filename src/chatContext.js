@@ -27,6 +27,7 @@ export const ChatProvider = ({ children }) => {
     const [user,setUser] = useState(null);
     const [callee,setCallee] = useState(null);
     const [caller,setCaller] = useState(null);
+    const [usersIds,setUsersIds] = useState(null);
 
     
     // останавливает соединение с любой стороны
@@ -71,7 +72,7 @@ export const ChatProvider = ({ children }) => {
     }
 
     return (
-      <chatContext.Provider value={{user,setUser,localStreamRef, remoteStreamRef, callStatus, setCallStatus, call,setCall,connection,caller,setCaller,callee,setCallee, firestore, stopCall, deleteCallDocument}}>
+      <chatContext.Provider value={{user,setUser,localStreamRef, remoteStreamRef, callStatus, setCallStatus, call,setCall,connection,caller,setCaller,callee,setCallee, firestore, stopCall, deleteCallDocument, usersIds, setUsersIds}}>
         {children}
       </chatContext.Provider>
     );

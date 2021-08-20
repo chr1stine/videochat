@@ -3,7 +3,7 @@ import chatContext from '../chatContext';
 
 const Connect = ()=>{
     
-    const {firestore, user, setUser, setUsersIds, localStreamRef } = useContext(chatContext);
+    const {firestore, user, setUser, setUsersIds, localStreamRef, setCall, setCalleeID, setCallerID, setCallStatus } = useContext(chatContext);
 
     
     // определяет пользователей в сети
@@ -46,9 +46,9 @@ const Connect = ()=>{
 
                 // })
 
-                setCallee(user1);
+                setCalleeID(user1);
                 const caller1 = firestore.collection('users').doc(data?.callerID);
-                setCaller(caller1);
+                setCallerID(caller1);
 
                 setCallStatus('incoming');
             }

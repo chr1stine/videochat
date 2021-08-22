@@ -1,15 +1,20 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useContext } from 'react';
 import Status from './Status';
+import chatContext from '../chatContext';
 
-const Videos = ({localStream, remoteStream})=>{
+const Videos = ()=>{
+
+    const { localStreamRef, remoteStreamRef } = useContext(chatContext);
 
     const myVideo = useRef(null);
     const peerVideo = useRef(null);
 
     useEffect(()=>{
-        myVideo.current.srcObject = localStream;
-        peerVideo.current.srcObject = remoteStream;
-    },[localStream, remoteStream]);
+        myVideo.current.srcObject = localStreamRef.current;
+        peerVideo.current.srcObject = remoteStreamRef.current;
+    },[localStreamRef.current, remoteStreamRef.current]);
+
+    console.log('local stream is ',localStreamRef.current);
 
     return(
         <div className="videos-wrapper">

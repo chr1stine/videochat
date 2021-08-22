@@ -25,7 +25,7 @@ const IncomingCall = ()=>{
         stopCall} = useContext(chatContext);
 
     // подписка на события звонка
-    call.onSnapshot(async snapshot => {
+    call?.onSnapshot(async snapshot => {
         if (snapshot.exists){
             const data = snapshot.data();                
             if (!connection.current?.currentRemoteDescription && data?.answer) {

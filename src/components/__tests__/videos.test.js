@@ -1,12 +1,12 @@
 import React from 'react';
 import ReactDOM from 'react-dom'
 import { render, screen } from '@testing-library/react';
-import Input from '../Input';
+import Videos from '../Videos';
 import '@testing-library/jest-dom'
 
-it("input renders without crashing",()=>{
+it("Videos renders without crashing",()=>{
     const div = document.createElement("div");
-    ReactDOM.render(<Input />,div);
+    ReactDOM.render(<Videos />,div);
     document.body.appendChild(div);
     expect(div).toBeInTheDocument();
 });

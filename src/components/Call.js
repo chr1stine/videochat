@@ -1,10 +1,11 @@
-import React, { useContext } from 'react';
+import React, { useContext, useRef } from 'react';
 import chatContext from '../chatContext';
 
-const Call = ({inputRef})=>{
+const Call = ()=>{
 
     const { firestore, connection, servers, remoteStreamRef, localStreamRef, user, call, setCall, setCallStatus, setCalleeID, setCallerID, usersIds, stopCall } = useContext(chatContext);
 
+    const inputRef = useRef(null);
 
     // исходящий звонок
     async function callHandler(){
@@ -124,7 +125,10 @@ const Call = ({inputRef})=>{
     }
 
     return (
-        <button className='btn btn-primary' onClick={callHandler} disabled={!(user && !call)}>Позвонить</button>
+        <div>
+            <button className='btn btn-primary' onClick={callHandler} disabled={!(user && !call)}>Позвонить</button>
+            <input className='form-control input' ref={inputRef} type="text" placeholder="ID абонента"></input>
+        </div>
     )
 }
 

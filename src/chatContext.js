@@ -28,7 +28,7 @@ export const ChatProvider = ({ children }) => {
     const [calleeID,setCalleeID] = useState(null);
     const [callerID,setCallerID] = useState(null);
     const [usersIds,setUsersIds] = useState(null);
-    const [loginRequest,setLoginRequest] = useState(false);
+    const [rememberUser, setRememberUser] = useState(false);
     
     // останавливает соединение с любой стороны
     function stopCall(){
@@ -89,13 +89,10 @@ export const ChatProvider = ({ children }) => {
         setUser(user1);
 
         // получение списка пользователей
-        setUsersIds(await defineUsers());
+        setUsersIds(await getUsersIds());
 
         // получение медиа
         await getMedia();
-
-        // вход был произвден, можно грузить приложение
-        setLoginRequest(false);
     }
     
     // получение медиа
@@ -118,8 +115,44 @@ export const ChatProvider = ({ children }) => {
         }
     }
 
+    
+    // добавляет себя в систему(документ в коллекцию пользователей, состояние и т.д.)
+    async function register(userId){
+
+        const user1 = firestore.collection('users').doc(userId);
+        await user1.set({rememberUser});
+
+        // добавление в локальное хранилище
+        if (rememberUser){
+            let usersIds1 = JSON.parse(localStorage.getItem("usersIds"));
+            if (!(usersIds1)){
+                usersIds1 = [];
+            }
+            localStorage.setItem("usersIds",JSON.stringify([...usersIds1, user1.id]));
+        }
+
+        // подписка на событие звонка себе
+        user1.onSnapshot(async snapshot => {
+
+            const data = snapshot.data();
+
+            if (data?.incomingCallID){
+
+                const call1 = firestore.collection('calls').doc(data.incomingCallID);
+                setCall(call1);
+
+                setCalleeID(user1);
+
+                const caller1 = firestore.collection('users').doc(data?.callerID);
+                setCallerID(caller1);
+
+                setCallStatus('incoming');
+            }
+        });
+    }
+
     // возвращает других пользователей в сети
-    async function defineUsers(){
+    async function getUsersIds(){
         const users1 = [];
         const usersCollection = await firestore.collection('users');
 
@@ -139,8 +172,41 @@ export const ChatProvider = ({ children }) => {
         return users1;
     }
 
+    async function disconnect(){
+        if (call){
+            hangUpHandler();
+        }
+
+        localStreamRef.current.getTracks().forEach(function(track) {
+            track.stop();
+        });
+
+        sessionStorage.removeItem("currentUserId");
+
+        const user1 = firestore.collection('users').doc(user.id)
+        const data = (await user1.get()).data();
+        const needToRemember = data?.rememberUser;
+        if(!needToRemember){
+            user1.delete();
+        }
+
+        setUser(null);
+
+        setUsersIds(null);
+    }
+
+    async function reserveRandomId(){
+        const randomDoc = firestore.collection('users').doc();
+        await randomDoc.set({});
+        return randomDoc.id;
+    }
+
+    async function clean(){
+        // TODO: delete unnecessary user documents - without online and rememberUser field
+    }
+
     return (
-      <chatContext.Provider value={{user,setUser,localStreamRef, remoteStreamRef, callStatus, setCallStatus, call,setCall,connection,callerID,setCallerID,calleeID,setCalleeID, firestore, stopCall, deleteCallDocument, usersIds, setUsersIds, loginRequest,setLoginRequest, login, getMedia, defineUsers}}>
+      <chatContext.Provider value={{user,setUser,localStreamRef, remoteStreamRef, callStatus, setCallStatus, call,setCall,connection,callerID,setCallerID,calleeID,setCalleeID, firestore, stopCall, deleteCallDocument, usersIds, setUsersIds, login, getMedia, getUsersIds, disconnect, register, reserveRandomId, clean}}>
         {children}
       </chatContext.Provider>
     );

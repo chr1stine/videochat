@@ -4,28 +4,29 @@ import User from './User';
 
 const Identification = ()=>{
 
-    const { usersIds, setUsersIds, firestore, setUser, defineUsers, getMedia, login } = useContext(chatContext);
+    const { usersIds, setUsersIds, getUsersIds, login, register, reserveRandomId } = useContext(chatContext);
 
-    const [savedUsers,setSavedUsers] = useState(null);
+    const [rememberedUsersIds,setRememeberedUsersIds] = useState(null);
     
     const [rememberUser, setRememberUser] = useState(false);
 
     useEffect(()=>{
 
         if (!usersIds){
-            const definingUsers = async ()=>{
-                const users = await defineUsers();
-                setUsersIds(users);
+            const gettingUsersIds = async ()=>{
+                const usersIds1 = await getUsersIds();
+                setUsersIds(usersIds1);
             }
 
-            definingUsers();
+            gettingUsersIds();
         }     
         
-        if (!savedUsers){
-            let savedUsers1 = recallSavedUsers()
-            setSavedUsers(savedUsers1);
+        if (!rememberedUsersIds){
+            const rememberedUsersIds1 = getRememberedUsersIds();
+            setRememeberedUsersIds(rememberedUsersIds1);
         }
-    },[usersIds]);
+
+    },[usersIds, rememberedUsersIds]);
     
     const [style,setStyle] = useState({ display: "none" });
     const [nameIsUnique,setNameIsUnique] = useState(null);
@@ -33,55 +34,18 @@ const Identification = ()=>{
     const nameRef = useRef(null);
 
     // возвращает пользователей, раннее зарегистрированных через этот браузер
-    function recallSavedUsers(){
-        const users = JSON.parse(localStorage.getItem("usersIds"));
+    function getRememberedUsersIds(){
+        const rememberedUsersIds1 = JSON.parse(localStorage.getItem("usersIds"));
 
-        if (users){
-            users.map(prevUserId => {
-                return prevUserId
+        if (rememberedUsersIds1){
+            rememberedUsersIds1.map(id => {
+                return id
             });
         }else{
             return null;
         }
 
-        return users;
-    }
-
-    // добавляет себя в систему(документ в коллекцию пользователей, состояние и т.д.)
-    async function register(userId){
-
-        const user1 = firestore.collection('users').doc(userId);
-        await user1.set({rememberUser});
-
-        // добавление в локальное хранилище
-        if (rememberUser){
-            let usersIds1 = JSON.parse(localStorage.getItem("usersIds"));
-            if (!(usersIds1)){
-                usersIds1 = [];
-            }
-            localStorage.setItem("usersIds",JSON.stringify([...usersIds1, user1.id]));
-        }
-
-        // подписка на событие звонка себе
-        user1.onSnapshot(async snapshot => {
-
-            const data = snapshot.data();
-
-            if (data?.incomingCallID){
-
-                const call1 = firestore.collection('calls').doc(data.incomingCallID);
-                setCall(call1);
-
-                setCalleeID(user1);
-
-                const caller1 = firestore.collection('users').doc(data?.callerID);
-                setCallerID(caller1);
-
-                setCallStatus('incoming');
-            }
-        });
-
-        console.log('user document is ',user1);
+        return rememberedUsersIds1;
     }
 
     async function newUserClickHandler(){
@@ -102,9 +66,7 @@ const Identification = ()=>{
     }
 
     async function randomNameClickHandler(){
-        const user1 = firestore.collection('users').doc();
-        const userId = user1.id;
-        await user1.set({});
+        const userId = await reserveRandomId();
         nameRef.current.value = userId;
         setNameIsUnique(true);
     }
@@ -122,27 +84,57 @@ const Identification = ()=>{
                 <label>Войти как:</label>
 
                 {
-                    savedUsers?.map(u=>{
-                        if (u)
-                        return <User key={u} userId={u} />
+                    rememberedUsersIds?.map(userId1=>{
+                        if (userId1)
+                        return <User key={userId1} userId={userId1} />
                     })
                 }
 
-                <button className="btn btn-outline-primary" onClick={newUserClickHandler}>+ Новый пользователь</button>
+                <button 
+                    className="btn btn-outline-primary" 
+                    onClick={newUserClickHandler}>
+                        + Новый пользователь
+                </button>
+
 
                 <div className="new-user-container" style={style}>
+                    
                     <label>Ваше имя:</label>
 
                     <input ref={nameRef} onChange={userNameChangeHandler} className="form-control input" type="text"/>
 
                     <div className="new-user-buttons-container">
-                        <button className="btn btn-primary" disabled={!(nameIsUnique === true)} onClick={okClickHandler}>Ок</button>
-                        <button className="btn btn-info" onClick={randomNameClickHandler}>Случайное</button>
+
+
+                        <button
+                         className="btn btn-primary" 
+                         disabled={!(nameIsUnique === true && usersIds)} 
+                         onClick={okClickHandler}>
+                             Ок
+                        </button>
+
+
+                        <button
+                         className="btn btn-info" 
+                         onClick={randomNameClickHandler}>
+                             Случайное
+                        </button>
+
+
                     </div>
 
-                    <p style={{color: nameIsUnique === true ? 'green' : 'red'}}>{nameIsUnique ? 'Имя свободно': nameIsUnique === false ? 'Имя занято' : ''}</p>
+                    <p
+                     style={{color: nameIsUnique === true ? 'green' : 'red'}}>
+                         {nameIsUnique ? 'Имя свободно': nameIsUnique === false ? 'Имя занято' : ''}
+                    </p>
+                    
                     <div className="form-check">
-                        <input type="checkbox" autoComplete="off" checked={rememberUser} onChange={()=>{setRememberUser(!rememberUser)}} /> Запомнить меня
+                        <input
+                         type="checkbox" 
+                         autoComplete="off" 
+                         checked={rememberUser} 
+                         onChange={()=>{setRememberUser(!rememberUser)}} /> 
+                            Запомнить меня
                     </div>
                 </div>
             </div>

@@ -5,6 +5,8 @@ import Main from './Main'
 
 const App = ()=>{
 
+    const { user, login, disconnect, clean } = useContext(chatContext);
+
     // восстановление из незавершенной сессии
     useEffect(()=>{
         const restoringSession = async ()=>{
@@ -12,48 +14,24 @@ const App = ()=>{
                 const savedUserId = sessionStorage.getItem("currentUserId");
                 if (savedUserId){
                     await login(savedUserId);
-                    setLoginRequest(false);
                 }
             }
         }
         
         restoringSession();
-    },[]);
-
-    const { 
-        user, setUser,
-        localStreamRef, remoteStreamRef,
-        callStatus, setCallStatus,
-        connection,
-        call,setCall,
-        caller, setCaller,
-        callee, setCallee,
-        firestore, stopCall,
-        usersIds,setUsersIds,
-        loginRequest,setLoginRequest,
-        login
-    } = useContext(chatContext);
+    },[user]);
 
     // при отключении через закрытие вкладки и т.д.
     window.onbeforeunload = async ()=>{
-        if (call){
-            stopCall();
-        }
-        
-        if (user){
-            // disconnectHandler
-            firestore.collection('usersIds').doc(user.id).delete();
-            setUser(null);
-        }
+        await disconnect();
+        await clean();
     }
+
+    const content = user === null ? <Identification /> : <Main />
 
     return(
         <div className="wrapper">
-
-            { loginRequest && <Identification />}
-
-            <Main />
-
+            { content }
         </div>
     );
 }

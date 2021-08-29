@@ -9,7 +9,7 @@ import UsersList from './UsersList';
 
 const Main = ()=>{
 
-    const { user, usersIds, setUsersIds, callStatus, setLoginRequest, loginRequest, defineUsers} = useContext(chatContext);
+    const { user, usersIds, setUsersIds, callStatus, defineUsers} = useContext(chatContext);
 
     // обработка события сброса звонка
     async function hangUpHandler(){
@@ -30,7 +30,7 @@ const Main = ()=>{
 
             <div className="buttons-wrapper">
                 <div className="buttons-container">
-                    <button className="btn btn-primary" onClick={async ()=> setLoginRequest(true)}>Войти</button>
+                    {/* <button className="btn btn-primary" onClick={async ()=> setLoginRequest(true)}>Войти</button> */}
                     <Call />
                     <HangUp hangUpHandler={hangUpHandler}/>
                     <Disconnect hangUpHandler={hangUpHandler}/>

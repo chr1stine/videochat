@@ -1,39 +1,30 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import chatContext from '../chatContext';
 import Videos from './Videos';
 import IncomingCall from './IncomingCall';
 import HangUp from './HangUp';
-import Disconnect from './Disconnect';
+import Logout from './Logout';
 import Call from './Call';
 import UsersList from './UsersList';
 
 const Main = ()=>{
 
-    const { user, usersIds, setUsersIds, callStatus, defineUsers} = useContext(chatContext);
-
-    // обработка события сброса звонка
-    async function hangUpHandler(){
-        let status = callStatus === 'outgoing' ? 'canceled' : 'hanged up'
-        await call.update({
-            status
-        });
-    }
+    const { user, callStatus } = useContext(chatContext);
 
     return (
         <div className="container">
 
-            { user && usersIds && <UsersList /> }
+            { user && <UsersList /> }
 
-            { callStatus === 'incoming' && <IncomingCall />}
+            { callStatus === 'Входящий звонок' && <IncomingCall />}
             
             { user && <Videos />}
 
             <div className="buttons-wrapper">
                 <div className="buttons-container">
-                    {/* <button className="btn btn-primary" onClick={async ()=> setLoginRequest(true)}>Войти</button> */}
                     <Call />
-                    <HangUp hangUpHandler={hangUpHandler}/>
-                    <Disconnect hangUpHandler={hangUpHandler}/>
+                    <HangUp />
+                    <Logout />
                 </div>
             </div>
         </div>

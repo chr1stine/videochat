@@ -4,11 +4,11 @@ import chatContext from '../chatContext';
 
 const UsersList = ()=>{
 
-    const {user, usersIds} = useContext(chatContext);
+    const { user, onlineUsersIds } = useContext(chatContext);
 
     function usersIdsListItems(){
         const lis = [];
-        usersIds.forEach(userId=>{
+        onlineUsersIds?.forEach(userId=>{
 
             let str = userId;
             if(userId===user.id){
@@ -22,15 +22,22 @@ const UsersList = ()=>{
             );
 
         });
-        return lis;
+
+        if (lis.length){
+            return lis
+        }else{
+            'Нет подключенных пользователей'
+        }
     }
+
+    const content = usersIdsListItems();
 
     return(
         <div className="usersIdsList-wrapper">
             <div className="usersIdsList-container">
                 <h2>Подключенные пользователи</h2>
                 <ul>
-                   { usersIdsListItems() }
+                   { content }
                 </ul>
             </div>
         </div>

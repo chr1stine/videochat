@@ -1,12 +1,17 @@
 import React, { useContext } from 'react';
 import chatContext from '../chatContext';
 
-const HangUp = ({hangUpHandler})=>{
+const HangUp = ()=>{
 
-    const { call, callStatus } = useContext(chatContext);
+    const { call, callStatus, hangUp } = useContext(chatContext);
 
     return(
-        <button className='btn btn-primary' onClick={hangUpHandler} disabled={!(call && callStatus === 'accepted' || callStatus === 'outgoing')}>Сбросить</button>
+        <button 
+            className='btn btn-primary' 
+            onClick={async ()=>{await hangUp()}} 
+            disabled={!(call && callStatus === 'Звонок принят' || callStatus === 'Исходящий звонок')}>
+                Сбросить
+        </button>
     )
 }
 

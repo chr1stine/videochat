@@ -3,50 +3,26 @@ import chatContext from '../chatContext';
 import User from './User';
 
 const Identification = ()=>{
-
-    const { usersIds, setUsersIds, getUsersIds, login, register, reserveRandomId } = useContext(chatContext);
-
+    
+    const { usersIds, setUsersIds, getUsersIds, login, signUp, reserveRandomId, getRememberedUsersIds } = useContext(chatContext);
     const [rememberedUsersIds,setRememeberedUsersIds] = useState(null);
-    
-    const [rememberUser, setRememberUser] = useState(false);
-
-    useEffect(()=>{
-
-        if (!usersIds){
-            const gettingUsersIds = async ()=>{
-                const usersIds1 = await getUsersIds();
-                setUsersIds(usersIds1);
-            }
-
-            gettingUsersIds();
-        }     
-        
-        if (!rememberedUsersIds){
-            const rememberedUsersIds1 = getRememberedUsersIds();
-            setRememeberedUsersIds(rememberedUsersIds1);
-        }
-
-    },[usersIds, rememberedUsersIds]);
-    
+    const [remember, setRemember] = useState(false);
     const [style,setStyle] = useState({ display: "none" });
     const [nameIsUnique,setNameIsUnique] = useState(null);
-
     const nameRef = useRef(null);
 
-    // возвращает пользователей, раннее зарегистрированных через этот браузер
-    function getRememberedUsersIds(){
-        const rememberedUsersIds1 = JSON.parse(localStorage.getItem("usersIds"));
 
-        if (rememberedUsersIds1){
-            rememberedUsersIds1.map(id => {
-                return id
-            });
-        }else{
-            return null;
-        }
+    useEffect(async ()=>{
 
-        return rememberedUsersIds1;
-    }
+        // все пользователи
+        getUsersIds()
+        .then((usersIds1)=>{ setUsersIds(usersIds1); })
+        .catch(console.error)
+        
+        // сохраненные пользователи
+        setRememeberedUsersIds(getRememberedUsersIds());
+
+    },[]);
 
     async function newUserClickHandler(){
         setStyle({ display: "block" });
@@ -73,7 +49,8 @@ const Identification = ()=>{
 
     async function okClickHandler(){
         const userId = nameRef.current.value;
-        await register(userId);
+
+        await signUp(userId, remember);
         await login(userId);
     }
 
@@ -82,11 +59,14 @@ const Identification = ()=>{
             <div className="modal-container">
 
                 <label>Войти как:</label>
-
                 {
                     rememberedUsersIds?.map(userId1=>{
-                        if (userId1)
-                        return <User key={userId1} userId={userId1} />
+                        if (userId1){
+                            return <User 
+                                        key={userId1} 
+                                        userId={userId1} 
+                                        loggedIn={localStorage.getItem(userId1) === "online"}/>
+                        }
                     })
                 }
 
@@ -96,16 +76,15 @@ const Identification = ()=>{
                         + Новый пользователь
                 </button>
 
-
                 <div className="new-user-container" style={style}>
-                    
                     <label>Ваше имя:</label>
-
-                    <input ref={nameRef} onChange={userNameChangeHandler} className="form-control input" type="text"/>
+                    <input 
+                        ref={nameRef} 
+                        onChange={userNameChangeHandler} 
+                        className="form-control input" 
+                        type="text"/>
 
                     <div className="new-user-buttons-container">
-
-
                         <button
                          className="btn btn-primary" 
                          disabled={!(nameIsUnique === true && usersIds)} 
@@ -113,14 +92,11 @@ const Identification = ()=>{
                              Ок
                         </button>
 
-
                         <button
                          className="btn btn-info" 
                          onClick={randomNameClickHandler}>
                              Случайное
                         </button>
-
-
                     </div>
 
                     <p
@@ -132,8 +108,8 @@ const Identification = ()=>{
                         <input
                          type="checkbox" 
                          autoComplete="off" 
-                         checked={rememberUser} 
-                         onChange={()=>{setRememberUser(!rememberUser)}} /> 
+                         checked={remember} 
+                         onChange={()=>{setRemember(!remember)}} /> 
                             Запомнить меня
                     </div>
                 </div>
